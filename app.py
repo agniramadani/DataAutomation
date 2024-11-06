@@ -1,7 +1,12 @@
+"""
+API endpoints for accessing patient, device, and data records, with 
+a background task to monitor database activity.
+"""
+
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from db_handler import SessionLocal
-from models import Patient, Device, DeviceData, DataQualityCheck, UserFeedback
+from models import Patient, Device, DataQualityCheck, UserFeedback
 from tasks import monitor_db
 import asyncio
 
@@ -28,11 +33,6 @@ async def get_patients(db: Session = Depends(get_db)):
 async def get_devices(db: Session = Depends(get_db)):
     devices = db.query(Device).all()
     return devices
-
-@app.get("/api/device-data")
-async def get_device_data(db: Session = Depends(get_db)):
-    device_data = db.query(DeviceData).all()
-    return device_data
 
 @app.get("/api/data-quality-checks")
 async def get_data_quality_checks(db: Session = Depends(get_db)):
