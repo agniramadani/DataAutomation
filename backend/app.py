@@ -4,6 +4,7 @@ a background task to monitor database activity.
 """
 
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from db_handler import SessionLocal
 from models import Patient, Device, DataQualityCheck, UserFeedback
@@ -11,6 +12,16 @@ from tasks import monitor_db
 import asyncio
 
 app = FastAPI()
+
+# NOTE: Allowing any port on localhost for development purposes only.
+# WARNING: In production, this should be restricted to specific origins to ensure security.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
