@@ -2,7 +2,7 @@
 A data automation project for a Basel-based pharma company, enabling data validation, event logging, and anomaly alerts, while allowing users to provide feedback for continuous improvement.
 
 ## Roadmap
-- App Overview
+- Screenshot
 
 - Prerequisites
 
@@ -10,32 +10,47 @@ A data automation project for a Basel-based pharma company, enabling data valida
 
 - Author
 
+## Screenshot
+![Screenshot](Screenshot.png)
+
 ## Prerequisites
 - Python 3
 - FastAPI
 - SQLite
+- React
+- Vite
 
 ## Getting Started
 
-### Install Dependencies
+### Install Backend Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Database Initialization
+### Set Up the Database
 ```bash
 cd backend && python3 init_db.py
 ```
 
-### Generate Fake Data
+### Generate Fake Data (Optional)
 ```bash
-python3 fake_data.py
+cd backend && python3 fake_data.py
 ```
 
-### Start the Application
+### Start the Backend Server
 ```bash
-uvicorn app:app --reload   
+cd backend && uvicorn app:app --reload   
+```
+
+### Set Up the Frontend
+```bash
+cd frontend && yarn install
+```
+
+### Run the Frontend Application
+```bash
+cd frontend && yarn dev
 ```
 
 ## Author
