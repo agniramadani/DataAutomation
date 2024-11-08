@@ -1,4 +1,4 @@
-# Data-Automation
+# DataAutomation
 A data automation project for a Basel-based pharma company, enabling data validation, event logging, and anomaly alerts, while allowing users to provide feedback for continuous improvement.
 
 ## Roadmap
