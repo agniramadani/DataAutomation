@@ -41,6 +41,7 @@ def check_data_quality():
         for index, row in data.iterrows():
             missing_values = []
             outliers = []
+            record_id = row["record_id"]
             patient_id = row["patient_id"]
             device_id = row["device_id"]
 
@@ -78,6 +79,7 @@ def check_data_quality():
             if existing_check is None:
                 # Prepare the data quality issue for insertion
                 quality_issue = DataQualityCheck(
+                    record_id=record_id,
                     device_id=device_id,
                     patient_id=patient_id,
                     timestamp=datetime.now(timezone.utc),

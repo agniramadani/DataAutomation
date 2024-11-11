@@ -43,6 +43,7 @@ class DataQualityCheck(Base):
     __tablename__ = 'data_quality_checks'
 
     id = Column(Integer, primary_key=True, index=True)
+    record_id = Column(Integer)
     device_id = Column(Integer, ForeignKey('devices.id'))
     patient_id = Column(Integer, ForeignKey('patients.id'))
     timestamp = Column(DateTime, default=datetime.now(timezone.utc))
@@ -58,6 +59,7 @@ class UserFeedback(Base):
     __tablename__ = 'user_feedback'
 
     feedback_id = Column(Integer, primary_key=True, index=True)
+    record_id = Column(Integer)
     device_id = Column(Integer, ForeignKey('devices.id'))
     patient_id = Column(Integer, ForeignKey('patients.id'))
     user_id = Column(String, nullable=False)
