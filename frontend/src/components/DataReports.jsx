@@ -9,15 +9,17 @@ const Table = ({ data }) => {
             <table className="table table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">DeviceId</th>
-                        <th scope="col">PatientId</th>
-                        <th scope="col">MissingValues</th>
+                        <th scope="col">Record Id</th>
+                        <th scope="col">Device Id</th>
+                        <th scope="col">Patient Id</th>
+                        <th scope="col">Missing Values</th>
                         <th scope="col">Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item) => (
                         <tr key={item.id}>
+                            <td>{item.record_id}</td>
                             <td>{item.device_id}</td>
                             <td>{item.patient_id}</td>
                             <td>{item.missing_values}</td>
@@ -47,10 +49,10 @@ const DataReports = () => {
     console.log(data);
     return (
         <>
-            <NavBar />
+            <NavBar activePage="p1"/>
             <Table data={data} />
         </>
     );
 };
 
-export default DataReports;
+export default DataReports

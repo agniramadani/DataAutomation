@@ -45,10 +45,10 @@ const Devices = () => {
 
     return (
         <>
-            <NavBar />
+            <NavBar activePage="p3"/>
             <Table data={data} />
         </>
     );
 };
 
-export default Devices;
+export default Devices

@@ -45,10 +45,10 @@ const Patients = () => {
     
     return (
         <>
-            <NavBar />
+            <NavBar activePage="p4"/>
             <Table data={data} />
         </>
     );
 };
 
-export default Patients;
+export default Patients
