@@ -16,6 +16,18 @@ from datetime import datetime, timezone
 
 Base = declarative_base()
 
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    full_name = Column(String, nullable=False)
+    username = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
+    
+    feedback = relationship("UserFeedback", back_populates="user")
+    authentications = relationship("UserAuthentication", back_populates="user")
+
+
 class Patient(Base):
     __tablename__ = 'patients'
 
@@ -37,6 +49,18 @@ class Device(Base):
     status = Column(String, default="active")
 
     quality_checks = relationship("DataQualityCheck", back_populates="device")
+    feedback = relationship("UserFeedback", back_populates="device")
+
+
+class UserAuthentication(Base):
+    __tablename__ = 'user_authentications'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    auth_token = Column(String, unique=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+
+    user = relationship("User", back_populates="authentications")
 
 
 class DataQualityCheck(Base):
@@ -62,9 +86,10 @@ class UserFeedback(Base):
     record_id = Column(Integer)
     device_id = Column(Integer, ForeignKey('devices.id'))
     patient_id = Column(Integer, ForeignKey('patients.id'))
-    user_id = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
     timestamp = Column(DateTime, default=datetime.now(timezone.utc))
     feedback_text = Column(String, nullable=False)
 
     patient = relationship("Patient", back_populates="feedback")
-    device = relationship("Device")
+    user = relationship("User", back_populates="feedback")
+    device = relationship("Device", back_populates="feedback")

@@ -5,12 +5,15 @@ Run this script to populate the database with sample data for testing.
 """
 
 from faker import Faker
-from models import Patient, Device
+from models import Patient, Device, User
 from db_handler import SessionLocal
 import random
+from passlib.context import CryptContext
 
 fake = Faker()
 session = SessionLocal()
+
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def create_fake_patients(num_patients=10):
     patients = []
@@ -39,9 +42,20 @@ def create_fake_devices(num_devices=5):
     session.commit()
     return devices
 
+def create_admin_user():
+    # Note: Using 'admin' as username and password is for demonstration purposes only!
+    admin_user = User(
+        full_name="Admin User",
+        username="admin",
+        password=pwd_context.hash("admin")
+    )
+    session.add(admin_user)
+    session.commit()
+
 def main():
     create_fake_patients()
     create_fake_devices()
+    create_admin_user()
 
     print("Fake data generated successfully!")
 

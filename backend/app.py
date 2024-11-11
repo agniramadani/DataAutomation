@@ -5,12 +5,13 @@ a background task to monitor database activity.
 
 import asyncio
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
+from auth_handler import login
 from db_handler import SessionLocal
-from models import DataQualityCheck, Device, Patient, UserFeedback
+from models import DataQualityCheck, Device, Patient, User, UserFeedback, UserAuthentication
 from tasks import monitor_db
 from data_handler import get_all_data
 
@@ -37,6 +38,27 @@ def get_db():
 @app.on_event("startup")
 async def start_monitoring():
     asyncio.create_task(monitor_db())
+
+@app.post("/api/login")
+async def api_login(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    username = body.get("username")
+    password = body.get("password")
+    
+    if not username or not password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username and password are required",
+        )
+    
+    token = login(db, username, password)
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password",
+        )
+    
+    return {"access_token": token, "token_type": "bearer"}
 
 @app.get("/api/patients")
 async def get_patients(db: Session = Depends(get_db)):
