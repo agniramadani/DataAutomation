@@ -4,21 +4,29 @@ a background task to monitor database activity.
 """
 
 import asyncio
-
 from fastapi import Depends, FastAPI, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from contextlib import asynccontextmanager
 
 from auth_handler import login
 from db_handler import SessionLocal
-from models import DataQualityCheck, Device, Patient, User, UserFeedback, UserAuthentication
+from models import DataQualityCheck, Device, Patient, UserFeedback, UserAuthentication
 from tasks import monitor_db
 from data_handler import get_all_data
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Start the background task
+    task = asyncio.create_task(monitor_db())
+    yield
+    # Cancel the background task on shutdown
+    task.cancel()
 
-# NOTE: Allowing any port on localhost for development purposes only.
-# WARNING: In production, this should be restricted to specific origins to ensure security.
+app = FastAPI(lifespan=lifespan)
+
+# Allow any port on localhost for development only. 
+# WARNING: Restrict origins in production for security.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -33,11 +41,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-# Start the background task when the application starts
-@app.on_event("startup")
-async def start_monitoring():
-    asyncio.create_task(monitor_db())
 
 @app.post("/api/login")
 async def api_login(request: Request, db: Session = Depends(get_db)):
@@ -58,28 +61,38 @@ async def api_login(request: Request, db: Session = Depends(get_db)):
             detail="Invalid username or password",
         )
     
-    return {"access_token": token, "token_type": "bearer"}
+    return {"token": token, "token_type": "bearer"}
 
-@app.get("/api/patients")
+def verify_token(request: Request, db: Session = Depends(get_db)):
+    # Extract the token
+    auth_token = request.headers.get("Authorization")
+
+    # Validate token and existence in database
+    if auth_token and db.query(UserAuthentication).filter_by(auth_token=auth_token).first():
+        return status.HTTP_200_OK,
+    
+    # Token is either missing or invalid
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or missing token"
+    )
+
+@app.get("/api/patients", dependencies=[Depends(verify_token)])
 async def get_patients(db: Session = Depends(get_db)):
-    patients = db.query(Patient).all()
-    return patients
+    return db.query(Patient).all()
 
-@app.get("/api/devices")
+@app.get("/api/devices", dependencies=[Depends(verify_token)])
 async def get_devices(db: Session = Depends(get_db)):
-    devices = db.query(Device).all()
-    return devices
+    return db.query(Device).all()
 
-@app.get("/api/data-quality-checks")
+@app.get("/api/data-quality-checks", dependencies=[Depends(verify_token)])
 async def get_data_quality_checks(db: Session = Depends(get_db)):
-    data_quality_checks = db.query(DataQualityCheck).all()
-    return data_quality_checks
+    return db.query(DataQualityCheck).all()
 
-@app.get("/api/user-feedback")
+@app.get("/api/user-feedback", dependencies=[Depends(verify_token)])
 async def get_user_feedback(db: Session = Depends(get_db)):
-    user_feedback = db.query(UserFeedback).all()
-    return user_feedback
+    return db.query(UserFeedback).all()
 
-@app.get("/api/all-data")
+@app.get("/api/all-data", dependencies=[Depends(verify_token)])
 async def api_get_all_data(db: Session = Depends(get_db)):
     return get_all_data(db)
