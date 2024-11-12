@@ -38,10 +38,18 @@ const DataReports = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/api/data-quality-checks`);
+                const token = localStorage.getItem('appToken');
+                const response = await axios.get(`${API_BASE_URL}/api/data-quality-checks`, {
+                    headers: {
+                        // Decode token from Base64
+                        Authorization: `${atob(token)}`, 
+                    },
+                });
                 setData(response.data);
             } catch (error) {
                 console.error("Error fetching data", error);
+                 // Remove token if error occurs (possibly expired or invalid)
+                 localStorage.removeItem('appToken');
             }
         };
         fetchData();

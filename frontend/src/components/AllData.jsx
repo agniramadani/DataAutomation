@@ -16,7 +16,7 @@ const Table = ({ data }) => {
                         <th scope="col">Parameter</th>
                         <th scope="col">Value</th>
                         <th scope="col">Unit</th>
-                        <th scope="col" style={{textAlign: 'center'}}>Reported</th>
+                        <th scope="col" style={{ textAlign: 'center' }}>Reported</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,8 +29,8 @@ const Table = ({ data }) => {
                             <td>{item.parameter}</td>
                             <td>{item.value}</td>
                             <td>{item.unit}</td>
-                            <td style={{textAlign: 'center'}}>
-                                {item.reported ? <span style={{ color: 'red'}}>🔴</span> : null}
+                            <td style={{ textAlign: 'center' }}>
+                                {item.reported ? <span style={{ color: 'red' }}>🔴</span> : null}
                             </td>
                         </tr>
                     ))}
@@ -46,18 +46,26 @@ const AllData = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/api/all-data`);
+                const token = localStorage.getItem('appToken');
+                const response = await axios.get(`${API_BASE_URL}/api/all-data`, {
+                    headers: {
+                        // Decode token from Base64
+                        Authorization: `${atob(token)}`, 
+                    },
+                });
                 setData(response.data);
             } catch (error) {
                 console.error("Error fetching data", error);
+                // Remove token if error occurs (possibly expired or invalid)
+                localStorage.removeItem('appToken');
             }
         };
         fetchData();
     }, []);
-    console.log(data);
+
     return (
         <>
-            <NavBar activePage="p2"/>
+            <NavBar activePage="p2" />
             <Table data={data} />
         </>
     );

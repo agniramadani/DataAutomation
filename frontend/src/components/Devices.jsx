@@ -34,10 +34,18 @@ const Devices = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/api/devices`);
+                const token = localStorage.getItem('appToken');
+                const response = await axios.get(`${API_BASE_URL}/api/devices`, {
+                    headers: {
+                        // Decode token from Base64
+                        Authorization: `${atob(token)}`, 
+                    },
+                });
                 setData(response.data);
             } catch (error) {
                 console.error("Error fetching device data", error);
+                 // Remove token if error occurs (possibly expired or invalid)
+                 localStorage.removeItem('appToken');
             }
         };
         fetchData();
