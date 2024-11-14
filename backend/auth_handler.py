@@ -41,7 +41,7 @@ def login(db: Session, username: str, password: str):
     existing_auth = db.query(UserAuthentication).filter(UserAuthentication.user_id == user.id).first()
     if existing_auth:
         # Return the existing token
-        return existing_auth.auth_token
+        return existing_auth.auth_token, user.id
 
     # Step 3: Create a new token if none exists
     token_data = {"sub": user.username}
@@ -51,4 +51,4 @@ def login(db: Session, username: str, password: str):
     db.commit()
     db.refresh(new_auth)
     
-    return new_auth.auth_token
+    return token, user.id

@@ -7,6 +7,7 @@ import asyncio
 from fastapi import Depends, FastAPI, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from feedback_handler import save_feedback
 from contextlib import asynccontextmanager
 
 from auth_handler import login
@@ -54,14 +55,15 @@ async def api_login(request: Request, db: Session = Depends(get_db)):
             detail="Username and password are required",
         )
     
-    token = login(db, username, password)
-    if not token:
+    result = login(db, username, password)
+    if result is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password",
         )
-    
-    return {"token": token, "token_type": "bearer"}
+
+    token, user_id = result
+    return {"token": token, "user_id": user_id}
 
 def verify_token(request: Request, db: Session = Depends(get_db)):
     # Extract the token
@@ -69,7 +71,7 @@ def verify_token(request: Request, db: Session = Depends(get_db)):
 
     # Validate token and existence in database
     if auth_token and db.query(UserAuthentication).filter_by(auth_token=auth_token).first():
-        return status.HTTP_200_OK,
+        return status.HTTP_200_OK
     
     # Token is either missing or invalid
     raise HTTPException(
@@ -96,3 +98,22 @@ async def get_user_feedback(db: Session = Depends(get_db)):
 @app.get("/api/all-data", dependencies=[Depends(verify_token)])
 async def api_get_all_data(db: Session = Depends(get_db)):
     return get_all_data(db)
+
+@app.post("/api/feedback", dependencies=[Depends(verify_token)])
+async def create_feedback(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    user_id = body.get("user_id")
+    record_id = body.get("record_id")
+    device_id = body.get("device_id")
+    patient_id = body.get("patient_id")
+    feedback_text = body.get("feedback_text")
+    
+    if not feedback_text:
+        raise HTTPException(status_code=400, detail="Feedback text is required.")
+    
+    save_feedback(db, record_id, device_id, patient_id, user_id, feedback_text)
+    return status.HTTP_201_CREATED
+
+@app.get("/api/all-feedbacks", dependencies=[Depends(verify_token)])
+async def get_all_feedback(db: Session = Depends(get_db)):
+    return db.query(UserFeedback).all()
