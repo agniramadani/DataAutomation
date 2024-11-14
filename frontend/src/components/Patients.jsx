@@ -44,8 +44,9 @@ const Patients = () => {
                 setData(response.data);
             } catch (error) {
                 console.error("Error fetching patient data", error);
-                 // Remove token if error occurs (possibly expired or invalid)
-                 localStorage.removeItem('appToken');
+                // Remove token and userId if error occurs (possibly expired or invalid)
+                localStorage.removeItem('appToken');
+                localStorage.removeItem('userId');
             }
         };
         fetchData();

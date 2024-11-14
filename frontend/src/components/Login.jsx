@@ -10,10 +10,11 @@ function Login() {
     try {
       const response = await axios.post(`${API_BASE_URL}/api/login`, { username, password });
       const token = response.data.token;
-
+      const userId = response.data.user_id;
       if (token) {
-        // Base64 encode the token for basic security
+        // Base64 encode the token and user_id for basic security
         localStorage.setItem('appToken', btoa(token));
+        localStorage.setItem('userId', btoa(userId));
         window.location.reload();
       } else {
         alert('Login failed. Please check your credentials.');
