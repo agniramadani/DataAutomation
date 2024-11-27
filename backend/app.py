@@ -91,10 +91,6 @@ async def get_devices(db: Session = Depends(get_db)):
 async def get_data_quality_checks(db: Session = Depends(get_db)):
     return db.query(DataQualityCheck).all()
 
-@app.get("/api/user-feedback", dependencies=[Depends(verify_token)])
-async def get_user_feedback(db: Session = Depends(get_db)):
-    return db.query(UserFeedback).all()
-
 @app.get("/api/all-data", dependencies=[Depends(verify_token)])
 async def api_get_all_data(db: Session = Depends(get_db)):
     return get_all_data(db)
