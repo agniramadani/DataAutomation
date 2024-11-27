@@ -8,6 +8,8 @@ A data automation project for a Basel-based pharma company, enabling data valida
 
 - Getting Started
 
+- App Overview
+
 - Author
 
 ## Screenshot
