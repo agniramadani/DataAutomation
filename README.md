@@ -53,5 +53,26 @@ cd frontend && yarn install
 cd frontend && yarn dev
 ```
 
+## App Overview
+### Setup and Initial Login
+After setting up the backend and generating fake data for demonstration purposes, you can log in using the following credentials, which are intended for testing only:
+
+**Username:** `admin`
+
+**Password:** `admin`
+
+*Important*: These credentials are insecure. Replace them with a secure user setup for real-world use.
+
+### Key Features After Login
+**Data Reports:** Users can review reports detected by the app. 
+
+**All Data:** Users can manually verify the data, if the system misses an issue, users can provide feedback directly to improve the system's accuracy over time.
+
+**Devices:** View a list of all devices integrated into the system. 
+
+**Patients:** Explore patient records managed by the system.
+
+**Feedback:** View all feedback submitted by users.
+
 ## Author
 - [Agni Ramadani](https://github.com/agniramadani)
