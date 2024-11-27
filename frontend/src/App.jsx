@@ -4,6 +4,7 @@ import Devices from './components/Devices';
 import Patients from './components/Patients';
 import AllData from './components/AllData';
 import Login from './components/Login';
+import AllFeedbacks from './components/AllFeedbacks';
 
 function App() {
   const token = localStorage.getItem('appToken');
@@ -18,6 +19,7 @@ function App() {
             <Route path="/all-data" element={<AllData />} />
             <Route path="/devices" element={<Devices />} />
             <Route path="/patients" element={<Patients />} />
+            <Route path="/feedbacks" element={<AllFeedbacks />} />
             <Route path="/login" element={<Navigate replace to="/" />} />
           </>
         )}
@@ -26,4 +28,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

@@ -64,4 +64,4 @@ const DataReports = () => {
     );
 };
 
-export default DataReports
+export default DataReports;

@@ -120,6 +120,7 @@ const AllData = () => {
             );
             setShowModal(false);
             setFeedbackText(null);
+            alert('Your feedback has been sent!')
         } catch (error) {
             console.error("Error submitting feedback", error);
             localStorage.removeItem('appToken');
@@ -166,4 +167,4 @@ const AllData = () => {
     );
 };
 
-export default AllData
+export default AllData;

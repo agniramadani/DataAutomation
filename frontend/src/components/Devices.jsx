@@ -60,4 +60,4 @@ const Devices = () => {
     );
 };
 
-export default Devices
+export default Devices;

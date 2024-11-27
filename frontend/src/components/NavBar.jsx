@@ -20,6 +20,9 @@ const NavBar = ({ activePage }) => {
                         <li className="nav-item">
                             <a className={`nav-link ${activePage === 'p4' ? 'active' : ''}`} href="patients">Patients</a>
                         </li>
+                        <li className="nav-item">
+                            <a className={`nav-link ${activePage === 'p5' ? 'active' : ''}`} href="feedbacks">Feedbacks</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -27,4 +30,4 @@ const NavBar = ({ activePage }) => {
     );
 };
 
-export default NavBar
+export default NavBar;
